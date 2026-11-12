@@ -1,0 +1,39 @@
+import hashlib
+
+# Mock database to store users
+user_database = {}
+
+def hash_password(password):
+    """Hashes the password for security (NFR2 compliance)."""
+    return hashlib.sha256(password.encode()).hexdigest()
+
+def register_account(email, password, account_type):
+    """Registers a new volunteer or non-profit account."""
+    if email in user_database:
+        return "Error: Account with this email already exists."
+    
+    user_database[email] = {
+        "password": hash_password(password),
+        "account_type": account_type
+    }
+    return f"Success: {account_type} account created for {email}!"
+
+def login_user(email, password):
+    """Authenticates the user upon login."""
+    if email not in user_database:
+        return "Error: Account not found."
+    
+    if user_database[email]["password"] == hash_password(password):
+        return f"Success: Logged in as {user_database[email]['account_type']}."
+    else:
+        return "Error: Invalid password."
+
+# --- Output Demonstration for Demo Screenshot ---
+if __name__ == "__main__":
+    print("--- CommunityConnect: New User Registration ---")
+    print(register_account("volunteer@test.com", "secure123", "Volunteer"))
+    print(register_account("shelter@test.com", "password456", "Non-Profit"))
+    
+    print("\n--- CommunityConnect: User Login ---")
+    print(login_user("volunteer@test.com", "secure123"))
+    print(login_user("shelter@test.com", "wrongpass"))
